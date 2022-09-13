@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Document</title>
+    <style>
+      .modal1{
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin-left: 400px;
+        margin-top: 60px;
+        padding: 50px;
+        width: 40%;
+        background-color: red;
+        z-index: 100;
+        visibility:hidden;
+      }
+    </style>
+</head>
+<body>
+    <!-- Button to Open the Modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#additem">
+    ADD Item
+  </button>
+  
+  <!-- The Modal -->
+  <div class="modal" id="additem">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Modal Heading</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+        <form action="/inventory/add" method="post">
+          <div class="row mt-2">
+            <div class="col-4">P_ID</div>
+            <div class="col-1">:</div>
+            <div class="col-6"><input type="text" name="p_id"></div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-4">Name</div>
+            <div class="col-1">:</div>
+            <div class="col-6"><input type="text" name="pname"></div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-4">Catogary</div>
+            <div class="col-1">:</div>
+            <div class="col-6"><input type="text" name="pcatogory"></div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-4">Qty</div>
+            <div class="col-1">:</div>
+            <div class="col-6"><input type="text" name="pqty"></div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-4">Purchase Date</div>
+            <div class="col-1">:</div>
+            <div class="col-6"><input type="date" name="pdate"></div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-4">unit Price</div>
+            <div class="col-1">:</div>
+            <div class="col-6"><input type="text" name="uprice"></div>
+          </div>
+
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Submit</button>  
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+    <div class="container">
+    <table id="example" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>P.ID</th>
+                <th>Name</th>
+                <th>Catogary</th>
+                <th>Qty</th>
+                <th>Last Purchase Date</th>
+                <th>unit Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+          <%data.forEach((x)=>{%>
+            <tr>
+                <td><%=x.P_id%></td>
+                <td><%=x.name%></td>
+                <td><%=x.catogary%></td>
+                <td><%=x.qty%></td>
+                <td><%=x.pdate%></td>
+                <td><%=x.uprice%></td>
+                <th><button class="btn btn-success"id="<%=x.id%>" onclick="modal(this)">update</button></th>
+            </tr>
+          <%})%>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>P.ID</th>
+                <th>Name</th>
+                <th>Catogary</th>
+                <th>Qty</th>
+                <th>Last Purchase Date</th>
+                <th>unit Price</th>
+            </tr>
+        </tfoot>
+    </table>
+    </div>
+
+    <div class="modal1" id="modal">
+      
+    </div>
+  
+  
+
+
+
+
+    
+    
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        $('#example').DataTable();
+    });
+
+    function modal(a) {
+        let domain="http://localhost:3000/inventory/update"
+        let modal=document.getElementById('modal')
+        modal.style.visibility='visible'
+        fetch(domain,{  
+        method:"GET",
+        headers:{
+          "Content-type":"application/json; charset=UTF-8"
+        }
+      })
+      .then((resp)=>resp.json())
+      .then((data)=>{
+        let cdata=data.data.find((x)=>x.id==a.id)
+        document.getElementById('modal').innerHTML=` <form action="/inventory/update" method="post">
+        <input type="hidden" name="id" value="${cdata.id}">
+        <div class="row">
+        <div class="col-3 offset-2">name</div>
+        <div class="col-1">:</div>
+        <div class="col"><input type="text" value="${cdata.name}"></div>
+      </div>
+      <div class="row">
+        <div class="col-3 offset-2">Unit Price</div>
+        <div class="col-1">:</div>
+        <div class="col"><input type="text" name="uprice" value="${cdata.uprice}"></div>
+      </div>
+      <div class="row">
+        <div class="col-3 offset-2">Purchase Date</div>
+        <div class="col-1">:</div>
+        <div class="col"><input type="date" name="update"></div>
+      </div>
+      <div class="row">
+        <div class="col-3 offset-2">Qty</div>
+        <div class="col-1">:</div>
+        <div class="col"><input type="number" name="upqty"></div>
+      </div>
+      </div>
+      <p class="text-right">
+      <button type="submit">submit</button>
+      <button type="button" onclick="closemodal()">close</button>
+      </p>
+    </form>`
+
+      })
+      .catch((e)=>{
+        console.error(e)
+      })
+                
+    }
+
+    function closemodal() {
+      let modal=document.getElementById('modal')
+      modal.style.visibility='hidden'
+      
+    }
+
+
+    </script>
+</body>
+</html>
