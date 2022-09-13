@@ -13,12 +13,13 @@ app.use(express.urlencoded({extended:false}))
 
 let inveteryRoute=require('./routes/inventoryRoute')
 let billingRoute=require('./routes/billingRoute')
-
+let historyRoute=require('./routes/historyRoute')
 app.get('/',(req,res)=>{
     res.render('home')
 })
 app.use('/inventory',inveteryRoute)
 app.use('/billing',billingRoute)
+app.use('/history',historyRoute)
 
 
 app.listen(3000,'',()=>{

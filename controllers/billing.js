@@ -1,6 +1,7 @@
 let Inventory =require('../models/inventory')
 let customerBill=require('../models/customerBillHistory')
 let currentBill=require('../models/currentBill')
+let history=require('../models/history')
 
 exports.getBillpage=async(req,res)=>{
     let currentdata=await currentBill.find()
@@ -20,13 +21,19 @@ exports.getProducts=async(req,res)=>{
 }
 exports.addProduct=async(req,res)=>{
     let {custname,itemid,itemname,itemqty,itemuprice}=req.body
-    await currentBill.create({id:Date.now(),itemid:itemid,custname:custname,itemName:itemname,itemQty:itemqty,itemUnitPrice:itemuprice})
+    var date = new Date();
+    var current_date = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+ date.getDate();
+    var current_time = date.getHours()+":"+date.getMinutes()+":"+ date.getSeconds();
+    await currentBill.create({id:Date.now(),itemid:itemid,custname:custname,itemName:itemname,itemQty:itemqty,itemUnitPrice:itemuprice,date:current_date,time:current_time})
+    await history.create({id:Date.now(),itemid:itemid,custname:custname,itemName:itemname,itemQty:itemqty,itemUnitPrice:itemuprice,date:current_date,time:current_time})
+
     res.redirect('/billing')
 
 }
 exports.deleteItem=async(req,res)=>{
-    let id=req.params.id
-    await currentBill.deleteOne({id:id})
+    let time=req.params.time
+    await currentBill.deleteOne({time:time})
+    await history.deleteOne({time:time})
     res.redirect('/billing')
 
 }
