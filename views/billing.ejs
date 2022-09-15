@@ -12,8 +12,11 @@
     <title>Home</title>
 </head>
 <body>
+  <div class="navbar-c">
+    <%-include('../partials/navbar.ejs')%>
+  </div>
     <p class="h1 text-center"> Billing</p>
-    <input type="text" id="username" name="custname" value="<%=custname%>">
+    <p class="text-center"><span class="h5">CUSTOMER NAME : </span><input type="text" class="border" id="username" name="custname" value="<%=custname%>"></p>
     <p class="text-center"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">ADD Item</button></p>
       <!-- Modal -->
       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -56,7 +59,7 @@
             <td><%=x.itemQty%></td>
             <td><%=x.itemUnitPrice%></td>
             <td><%=x.itemUnitPrice * x.itemQty%></td>
-            <td><a href="/billing/<%=x.time%>"><button type="button" class="btn btn-danger">delete</button></a></td>
+            <td><a href="/billing/<%=x.time%>/<%=x.itemid%>/<%=x.itemQty%>"><button type="button" class="btn btn-danger">delete</button></a></td>
           </tr>
         <%})%>
         <tr>
@@ -92,6 +95,9 @@
       .then((data)=>{
        let cdata=data.data.find((x)=>x.P_id==itemid)
         if(cdata){
+          if(cdata.qty<=0){
+            document.getElementById('modaldetails').innerHTML=`<h1>OUT OF STOCK</h1>`
+          }else{ 
           document.getElementById('modaldetails').innerHTML=`
           <form action="/billing/item" method="post">
                 <div class="row">
@@ -126,6 +132,7 @@
                 <button type="submit" class="btn btn-primary">add item</button>
                 </div> 
                 <form>`
+                }
 
         }else{
           document.getElementById('modaldetails').innerHTML=`<h1>item not in the inventory</h1>`

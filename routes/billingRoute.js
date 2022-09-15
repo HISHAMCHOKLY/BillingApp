@@ -16,7 +16,7 @@ router
     .get(clearBill)
 
 router
-    .route('/:time')
+    .route('/:time/:itemid/:qty')
     .get(deleteItem)    
 
 

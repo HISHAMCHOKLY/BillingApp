@@ -26,10 +26,12 @@
     </style>
 </head>
 <body>
+  <div class="navbar-c">
+    <%-include('../partials/navbar.ejs')%>
+  </div>
+  <p class="h1 text-center">INVENTORY</p>
     <!-- Button to Open the Modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#additem">
-    ADD Item
-  </button>
+  <p class="text-center"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#additem">ADD Item</button></p>
   
   <!-- The Modal -->
   <div class="modal" id="additem">

@@ -2,6 +2,7 @@ let Inventory =require('../models/inventory')
 let customerBill=require('../models/customerBillHistory')
 let currentBill=require('../models/currentBill')
 let history=require('../models/history')
+const inventory = require('../models/inventory')
 
 exports.getBillpage=async(req,res)=>{
     let currentdata=await currentBill.find()
@@ -26,12 +27,17 @@ exports.addProduct=async(req,res)=>{
     var current_time = date.getHours()+":"+date.getMinutes()+":"+ date.getSeconds();
     await currentBill.create({id:Date.now(),itemid:itemid,custname:custname,itemName:itemname,itemQty:itemqty,itemUnitPrice:itemuprice,date:current_date,time:current_time})
     await history.create({id:Date.now(),itemid:itemid,custname:custname,itemName:itemname,itemQty:itemqty,itemUnitPrice:itemuprice,date:current_date,time:current_time})
-
+    let updateinv=await inventory.findOne({itemid:itemid})
+    updateinv.qty-=itemqty
+    await updateinv.save()
     res.redirect('/billing')
 
 }
 exports.deleteItem=async(req,res)=>{
-    let time=req.params.time
+    let {time,itemid,qty}=req.params
+    let updateinv=await inventory.findOne({itemid:itemid})
+    updateinv.qty+=parseInt(qty)
+    await updateinv.save()
     await currentBill.deleteOne({time:time})
     await history.deleteOne({time:time})
     res.redirect('/billing')
