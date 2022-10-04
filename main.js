@@ -22,6 +22,6 @@ app.use('/billing',billingRoute)
 app.use('/history',historyRoute)
 
 
-app.listen(3000,'',()=>{
+app.listen(process.env.PORT,'',()=>{
     console.log("started");
 })
